@@ -6,6 +6,23 @@ public class Main {
         System.out.println("1. Reserve Seats");
         System.out.println("2. Exit");
     }
+    public static int[] getRowsAndColumns(String fileName) throws Exception {
+        FileInputStream inFile = new FileInputStream(new File(fileName));
+        Scanner fileScanner = new Scanner(inFile);
+    
+        int rows = 0;
+        int columns = 0;
+    
+        while(fileScanner.hasNextLine()){
+            String line = fileScanner.nextLine();
+            rows++;
+            columns = line.length();
+        }
+    
+        fileScanner.close();
+    
+        return new int[]{rows, columns};
+    }    
 
     // This is the main method that will be executed
     public static void main(String[] args) throws Exception {
@@ -19,9 +36,16 @@ public class Main {
 
             // Create auditorium object
             Auditorium<Seat> auditorium = new Auditorium<>();
-
             // Create scanner object to read from file
             Scanner fileScanner = new Scanner(inFile);
+
+            // Get rows and columns from file
+            int[] rowsAndColumns = getRowsAndColumns(fileName);
+            int rows = rowsAndColumns[0];
+            int columns = rowsAndColumns[1];
+
+            System.out.println("Rows: " + rows);
+            System.out.println("Columns: " + columns);
 
             scanner.close();
             fileScanner.close();
