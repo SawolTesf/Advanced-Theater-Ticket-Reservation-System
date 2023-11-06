@@ -43,9 +43,9 @@ public class Main {
             int[] rowsAndColumns = getRowsAndColumns(fileName);
             int rows = rowsAndColumns[0];
             int columns = rowsAndColumns[1];
-
-            System.out.println("Rows: " + rows);
-            System.out.println("Columns: " + columns);
+            
+            // Fill auditorium with seats
+            auditorium.fillAuditorium(fileScanner, rows, columns);
 
             scanner.close();
             fileScanner.close();
