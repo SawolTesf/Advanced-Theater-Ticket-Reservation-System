@@ -22,7 +22,22 @@ public class Main {
         fileScanner.close();
     
         return new int[]{rows, columns};
-    }    
+    }
+
+    // Checks if the user input is valid for the row and tickets
+    public static int getValidInput(Scanner scnr, String prompt, int minValue, int maxValue) {
+        int userInput;
+        boolean valid = false;
+        while (!valid) {
+            System.out.print(prompt);
+            userInput = scnr.nextInt();
+            if (userInput >= minValue && userInput <= maxValue) { // If the input falls below the min value or above the max value
+                valid = true;
+                return userInput;
+            }
+        }
+        return -1; // This line should never be reached
+    }
 
     // This is the main method that will be executed
     public static void main(String[] args) throws Exception {
@@ -47,6 +62,17 @@ public class Main {
             // Fill auditorium with seats
             auditorium.fillAuditorium(fileScanner, rows, columns);
 
+            int choice = 0;
+
+            while(choice != 2){
+                menu(); // Output the menu
+                auditorium.outputToConsole(fileScanner, rows, columns);
+                System.out.println("Enter choice: ");
+                choice = scanner.nextInt();
+                if(choice == 2) break;
+            }
+
+            // Close file and scanner objects
             scanner.close();
             fileScanner.close();
         }
