@@ -60,4 +60,38 @@ public class Auditorium<T> {
          currentColumn = 0;
       }
    }
+   public void outputToConsole(Scanner fileScanner, int rows, int columns){
+      Node<T> current = this.first;
+      Node<T> firstNodeOfRow = this.first;
+      int currentRow = 0;
+      int currentColumn = 0;
+      
+      System.out.print("  ");
+      for(int i = 0; i < columns; i++){
+         System.out.print((char)(i + 65));
+      }
+      System.out.println();
+
+      while(currentRow < rows){
+         System.out.print((currentRow + 1) + " ");
+
+         while(currentColumn < columns){
+            Seat seat = (Seat)current.getPayload();
+            char ticketType = seat.getTicketType();
+            if(ticketType == '.'){
+               System.out.print(".");
+            }
+            else{
+               System.out.print("#");
+            }
+            current = current.getNext();
+            currentColumn++;
+         }
+         System.out.println();
+         currentRow++;
+         currentColumn = 0;
+         firstNodeOfRow = firstNodeOfRow.getDown();
+         current = firstNodeOfRow;
+      }
+   }
 }
