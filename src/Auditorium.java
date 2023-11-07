@@ -1,4 +1,5 @@
 import java.util.*;
+import java.io.*;
 
 public class Auditorium<T> {
    private Node<T> first;
@@ -92,6 +93,98 @@ public class Auditorium<T> {
          currentColumn = 0;
          firstNodeOfRow = firstNodeOfRow.getDown();
          current = firstNodeOfRow;
+      }
+   }
+   public void outputToFile(PrintStream out, int rows, int columns){
+      Node<T> current = this.first;
+      Node<T> firstNodeOfRow = this.first;
+      int currentRow = 0;
+      int currentColumn = 0;
+      
+      while(currentRow < rows){
+         while(currentColumn < columns){
+            Seat seat = (Seat)current.getPayload();
+            char ticketType = seat.getTicketType();
+            out.print(ticketType);
+            current = current.getNext();
+            currentColumn++;
+         }
+         out.println();
+         currentRow++;
+         currentColumn = 0;
+         firstNodeOfRow = firstNodeOfRow.getDown();
+         current = firstNodeOfRow;
+      }
+
+   }
+   public boolean areSeatsAvailable(int userRow, int userSeatInt, int totalTickets, int totColumn){
+      Node<T> current = this.first;
+      Node<T> firstNodeOfRow = this.first;
+      int currentRow = 0;
+      int currentColumn = 0;
+      int currentTicket = 0;
+
+      // Move to the row that the user wants to reserve seats in
+      while(currentRow < userRow){
+         firstNodeOfRow = firstNodeOfRow.getDown();
+         current = firstNodeOfRow;
+         currentRow++;
+      }
+      // Check if the seats exceed the number of columns
+      if(userSeatInt + totalTickets > totColumn){
+         return false;
+      }
+      // Move to the seat that the user wants to reserve seats in
+      while(currentColumn < userSeatInt){
+         current = current.getNext();
+         currentColumn++;
+      }
+      // Check if the seats are available
+      while(currentTicket < totalTickets){
+         Seat seat = (Seat)current.getPayload();
+         char ticketType = seat.getTicketType();
+         if(ticketType == '.'){
+            currentTicket++;
+            current = current.getNext();
+         }
+         else{
+            return false;
+         }
+      }
+      return true;
+   }
+   public void reserveSeats(int userRow, int userSeatInt, int userAdultTickets, int userChildTickets, int userSeniorTickets, int totColumn){
+      Node<T> current = this.first;
+      Node<T> firstNodeOfRow = this.first;
+      int currentRow = 0;
+      int currentColumn = 0;
+
+      // Move to the row that the user wants to reserve seats in
+      while(currentRow < userRow){
+         firstNodeOfRow = firstNodeOfRow.getDown();
+         current = firstNodeOfRow;
+         currentRow++;
+      }
+      // Move to the seat that the user wants to reserve seats in
+      while(currentColumn < userSeatInt){
+         current = current.getNext();
+         currentColumn++;
+      }
+      // Reserve the seats
+      for(int i = currentColumn; i < currentColumn + userAdultTickets; i++){
+         Seat seat = (Seat)current.getPayload();
+         seat.setTicketType('A');
+         current = current.getNext();
+      }
+      for(int i = currentColumn + userAdultTickets; i < currentColumn + userAdultTickets + userChildTickets; i++){
+         Seat seat = (Seat)current.getPayload();
+         seat.setTicketType('C');
+         current = current.getNext();
+      }
+      for(int i = currentColumn + userAdultTickets + userChildTickets; i < currentColumn + userAdultTickets + userChildTickets + userSeniorTickets; i++){
+         Seat seat = (Seat)current.getPayload();
+         seat.setTicketType('S');
+         current = current.getNext();
       }
    }
 }
