@@ -34,7 +34,8 @@ public class Auditorium<T> {
          for(int i = 0; i < line.length(); i++){
             // current seat is going to be the column converted to a char letter Ex: 0 = A, 1 = B, 2 = C
             Seat seat = new Seat(currentRow, (char)(currentColumn + 65), line.charAt(i));
-
+            
+            @SuppressWarnings("unchecked")
             Node<T> newNode = new Node<T>((T)seat); // (T) is a cast so that the compiler knows that the object is of type T
             if(currentRow == 0 && currentColumn == 0){ // If we are at the first node of the auditorium
                this.first = newNode;
