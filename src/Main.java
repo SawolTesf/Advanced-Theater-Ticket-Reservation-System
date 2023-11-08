@@ -29,12 +29,18 @@ public class Main {
         int userInput;
         boolean valid = false;
         while (!valid) {
-            System.out.print(prompt);
-            userInput = scnr.nextInt();
-            if (userInput >= minValue && userInput <= maxValue) { // If the input falls below the min value or above the max value
-                valid = true;
-                return userInput;
+            try{
+                System.out.print(prompt);
+                userInput = scnr.nextInt();
+                if (userInput >= minValue && userInput <= maxValue) { // If the input falls below the min value or above the max value
+                    valid = true;
+                    return userInput;
+                }                
             }
+            catch(Exception e){
+                scnr.nextLine();
+            }
+
         }
         return -1; // This line should never be reached
     }
@@ -101,20 +107,8 @@ public class Main {
                     checkAhead = checkAhead.getNext(); // Move the checkAhead node to the next node
                 }
                 if(seatsAvailable){
-                    float midOfSeats = 0;
-                    
-                    // Get the middle of the seats
-                    midOfSeats = (float)(i + totalTickets / 2.0);
-
-                    // Get the middle of the row
-                    float midOfRow = 0;
-
-                    if(columns % 2 == 1){ // If the number of columns is odd
-                        midOfRow = (float)columns / 2;
-                    }
-                    else{ // If the number of columns is even
-                        midOfRow = (float)(columns / 2) + 0.5f;
-                    }
+                    float midOfRow = (float)(columns / 2.0); // Get the middle of the row
+                    float midOfSeats = (float)(i + totalTickets / 2.0); // Get the middle of the seats
 
                     // Get distance between the middle of the seats and the middle of the row
                     float currentDis = Math.abs(midOfSeats - midOfRow);
@@ -175,7 +169,7 @@ public class Main {
 
         // Ask user for file name and creste file object
         System.out.print("Enter file name: ");
-        //try{
+        try{
             String fileName = scanner.nextLine();
             FileInputStream inFile = new FileInputStream(new File(fileName));
 
@@ -234,6 +228,11 @@ public class Main {
                     System.out.println("Seats available");
                     // Reserve the seats
                     auditorium.reserveSeats(userRow - 1, userSeatInt, userAdultTickets, userChildTickets, userSeniorTickets, columns);
+                    totAdultTickets += userAdultTickets;
+                    totChildTickets += userChildTickets;
+                    totSeniorTickets += userSeniorTickets;
+                    totTickets += userAdultTickets + userChildTickets + userSeniorTickets;
+                    valid = false;
                     continue;
                 }
                 else{
@@ -247,17 +246,25 @@ public class Main {
                     }
                     // Output the best seat in format: <row><starting seat> - <row><ending seat>
                     System.out.println("Best available seats: " + (bestRow + 1) + (char)(bestSeat + 65) + " - " + (bestRow + 1) + (char)(bestSeat + userAdultTickets + userChildTickets + userSeniorTickets + 64));
+
+                    valid = false;
+                    String input = "";
                     // Ask user if they want to reserve the seats
-                    System.out.print("Would you like to reserve the seats? (Y/N): ");
-                    String input = scanner.next();
+                    while (!valid) {
+                        System.out.print("Would you like to reserve the seats? (Y/N): ");
+                        input = scanner.next();
+                        if(input.equalsIgnoreCase("Y") || input.equalsIgnoreCase("N")){
+                            valid = true;
+                        }
+                    }
+
                     if(input.equalsIgnoreCase("Y")){
                         // Reserve the seats
                         auditorium.reserveSeats(bestRow, bestSeat, userAdultTickets, userChildTickets, userSeniorTickets, columns);
-                        
-                    }
-                    else{
-                        valid = false;
-                        continue;
+                        totAdultTickets += userAdultTickets;
+                        totChildTickets += userChildTickets;
+                        totSeniorTickets += userSeniorTickets;
+                        totTickets += userAdultTickets + userChildTickets + userSeniorTickets;
                     }
                 }
                 valid = false;
@@ -266,13 +273,11 @@ public class Main {
             // Close file and scanner objects
             scanner.close();
             fileScanner.close();
-        //}
-/* 
+        }
         catch(Exception e){
             System.out.println("File not found");
             System.exit(0);
         }
-*/
         try{
             PrintStream out = new PrintStream(new FileOutputStream("A1.txt"));
             auditorium.outputToFile(out, rows, columns);
@@ -281,5 +286,13 @@ public class Main {
             System.out.println("Error writing to file");
             System.exit(0);
         }
+
+        System.out.println("Total Seats: " + ((rows) * (columns)));
+        System.out.println("Total Tickets: " + totTickets);
+        System.out.println("Adult Tickets :" + totAdultTickets);
+        System.out.println("Child Tickets :" + totChildTickets);
+        System.out.println("Senior Tickets :" + totSeniorTickets);
+        // Output the total sales with two decimal places
+        System.out.printf("Total Sales: $%.2f\n", (totAdultTickets * 10.00 + totChildTickets * 5.00 + totSeniorTickets * 7.50));
     }
 }
